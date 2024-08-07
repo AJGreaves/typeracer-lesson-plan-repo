@@ -41,19 +41,18 @@ header {
 
 /* results area */
 
-#results {
+#results-area {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(255, 132, 0, 0.5);
 }
 
-#results h2,
-#best-scores h2 {
+#results-area h2 {
     margin-bottom: 20px;
     font-weight: bold;
 }
 
-#results > p {
+#results-area > p {
     font-size: 1.1rem;
     margin-bottom: 5px;
 }
