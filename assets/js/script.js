@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const startButton = document.getElementById('start-button');
     const stopButton = document.getElementById('stop-button');
     const timeDisplay = document.getElementById('time');
+    const typingInput = document.getElementById('typing-input');
 
     let sampleText;
     let startTime;
@@ -49,12 +50,16 @@ document.addEventListener('DOMContentLoaded', function () {
     function startTimer() {
         startTime = new Date();
         timeDisplay.textContent = '0';
+        typingInput.disabled = false;
+        typingInput.placeholder = "Type here...";
+        typingInput.focus();
     }
 
     function stopTimer() {
         endTime = new Date();
         const timeDiff = ((endTime - startTime) / 1000).toFixed(2);
         timeDisplay.textContent = timeDiff.toString();
+        typingInput.disabled = true;
         const userInput = document.getElementById('typing-input').value;
         const correctWordCount = calculateCorrectWords(userInput, sampleText);
         const wpm = calculateWPM(correctWordCount, timeDiff);
@@ -81,10 +86,31 @@ document.addEventListener('DOMContentLoaded', function () {
         return wpm;
     }
 
+    function showTypingFeedback() {
+        const userInput = typingInput.value.trim();
+        const userWords = userInput.split(/\s+/);
+        const sampleWords = sampleText.trim().split(/\s+/);
+
+        let highlightedText = '';
+
+        for (let i = 0; i < sampleWords.length; i++) {
+            if (userWords[i] === undefined) {
+                highlightedText += `<span>${sampleWords[i]}</span> `;
+            } else if (userWords[i] === sampleWords[i]) {
+                highlightedText += `<span style="color: blue;">${sampleWords[i]}</span> `;
+            } else {
+                highlightedText += `<span style="color: red;">${sampleWords[i]}</span> `;
+            }
+        }
+
+        sampleTextDiv.innerHTML = highlightedText.trim();
+    }
+
 
     difficultySelect.addEventListener('change', updateSampleText);
     startButton.addEventListener('click', startTimer);
     stopButton.addEventListener('click', stopTimer);
+    typingInput.addEventListener('input', showTypingFeedback);
 
     // Initialize with a default text
     updateSampleText();
