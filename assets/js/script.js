@@ -19,8 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const difficultySelect = document.getElementById('difficulty-select');
     const sampleTextDiv = document.getElementById('sample-text');
-    const startButton = document.getElementById('start-button');
-    const stopButton = document.getElementById('stop-button');
+    const retryButton = document.getElementById('retry-button');
     const timeDisplay = document.getElementById('time');
     const typingInput = document.getElementById('typing-input');
     const wpmDisplay = document.getElementById('wpm');
@@ -62,9 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function startTimer() {
         startTime = new Date();
         timeDisplay.textContent = '0';
-        typingInput.disabled = false;
-        typingInput.placeholder = "The test has started";
-        typingInput.focus();
+        retryButton.disabled = true;
     }
 
     /**
@@ -80,6 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const correctWordCount = calculateCorrectWords(userInput, sampleText);
         const wpm = calculateWPM(correctWordCount, timeDiff);
         wpmDisplay.textContent = wpm.toString();
+
+        retryButton.disabled = false;
     }
 
     /**
@@ -142,16 +141,52 @@ document.addEventListener('DOMContentLoaded', function () {
         sampleTextDiv.innerHTML = highlightedText.trim();
     }
 
-    difficultySelect.addEventListener('change', updateSampleText);
-    typingInput.addEventListener('input', showTypingFeedback);
+    /**
+     * Handle difficulty change event.
+     */
+    function handleDifficultyChange() {
+        updateSampleText();
+    }
 
-    // Add event listener for Enter key
-    typingInput.addEventListener('keydown', function (event) {
+    /**
+     * Handle typing input event.
+     */
+    function handleTypingInput() {
+        showTypingFeedback();
+    }
+
+    /**
+     * Handle Enter key press event.
+     * @param {KeyboardEvent} event - The keyboard event.
+     */
+    function handleEnterKeyPress(event) {
         if (event.key === 'Enter') {
             event.preventDefault(); // Prevent default behavior of Enter key
             stopTimer();
         }
-    });
+    }
+
+    /**
+     * Handle retry button click event.
+     */
+    function handleRetryButtonClick() {
+        typingInput.value = '';
+        updateSampleText();
+        timeDisplay.textContent = '0';
+        wpmDisplay.textContent = '0';
+        typingInput.disabled = false;
+        typingInput.placeholder = "Begin typing to start the test. Hit enter to end the test.";
+        typingInput.focus();
+        startTime = null;
+        endTime = null;
+        retryButton.disabled = true; // Disable retry button while test is running
+    }
+
+    // Add event listeners
+    difficultySelect.addEventListener('change', handleDifficultyChange);
+    typingInput.addEventListener('input', handleTypingInput);
+    typingInput.addEventListener('keydown', handleEnterKeyPress);
+    retryButton.addEventListener('click', handleRetryButtonClick);
 
     // Initialize with a default text
     updateSampleText();
