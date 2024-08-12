@@ -65,10 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
         typingInput.disabled = false;
         typingInput.placeholder = "The test has started";
         typingInput.focus();
-
-        // Disable the start button and enable the stop button
-        startButton.disabled = true;
-        stopButton.disabled = false;
     }
 
     /**
@@ -84,10 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const correctWordCount = calculateCorrectWords(userInput, sampleText);
         const wpm = calculateWPM(correctWordCount, timeDiff);
         wpmDisplay.textContent = wpm.toString();
-
-        // Disable the stop button and enable the start button
-        stopButton.disabled = true;
-        startButton.disabled = false;
     }
 
     /**
@@ -126,6 +118,11 @@ document.addEventListener('DOMContentLoaded', function () {
      * Show typing feedback by highlighting correct and incorrect words.
      */
     function showTypingFeedback() {
+
+        if (!startTime) {
+            startTimer();
+        }
+
         const userInput = typingInput.value.trim();
         const userWords = userInput.split(/\s+/);
         const sampleWords = sampleText.trim().split(/\s+/);
@@ -146,12 +143,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     difficultySelect.addEventListener('change', updateSampleText);
-    startButton.addEventListener('click', startTimer);
-    stopButton.addEventListener('click', stopTimer);
     typingInput.addEventListener('input', showTypingFeedback);
 
-    // Initialize with a default text and disable typing input
+    // Add event listener for Enter key
+    typingInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default behavior of Enter key
+            stopTimer();
+        }
+    });
+
+    // Initialize with a default text
     updateSampleText();
-    typingInput.disabled = true;
-    typingInput.placeholder = "The typing area is disabled. Click the start button to begin the test.";
 });
