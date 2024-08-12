@@ -65,6 +65,10 @@ document.addEventListener('DOMContentLoaded', function () {
         typingInput.disabled = false;
         typingInput.placeholder = "The test has started";
         typingInput.focus();
+
+        // Disable the start button and enable the stop button
+        startButton.disabled = true;
+        stopButton.disabled = false;
     }
 
     /**
@@ -80,6 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const correctWordCount = calculateCorrectWords(userInput, sampleText);
         const wpm = calculateWPM(correctWordCount, timeDiff);
         wpmDisplay.textContent = wpm.toString();
+
+        // Disable the stop button and enable the start button
+        stopButton.disabled = true;
+        startButton.disabled = false;
     }
 
     /**
