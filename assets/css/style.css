@@ -39,6 +39,14 @@ header {
     background-color: #ff8400;
 }
 
+.correct-word {
+    color: blue;
+}
+
+.incorrect-word {
+    color: red;
+}
+
 /* results area */
 
 #results-area {

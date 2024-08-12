@@ -23,16 +23,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const stopButton = document.getElementById('stop-button');
     const timeDisplay = document.getElementById('time');
     const typingInput = document.getElementById('typing-input');
+    const wpmDisplay = document.getElementById('wpm');
 
     let sampleText;
     let startTime;
     let endTime;
 
+    /**
+     * Get a random text from the provided text array.
+     * @param {Array} textArray - Array of text strings.
+     * @returns {string} - Random text string.
+     */
     function getRandomText(textArray) {
         const randomIndex = Math.floor(Math.random() * textArray.length);
         return textArray[randomIndex];
     }
 
+    /**
+     * Update the sample text based on the selected difficulty.
+     */
     function updateSampleText() {
         const selectedDifficulty = difficultySelect.value;
 
@@ -47,25 +56,38 @@ document.addEventListener('DOMContentLoaded', function () {
         sampleTextDiv.textContent = sampleText;
     }
 
+    /**
+     * Start the typing test timer and enable the typing input.
+     */
     function startTimer() {
         startTime = new Date();
         timeDisplay.textContent = '0';
         typingInput.disabled = false;
-        typingInput.placeholder = "Type here...";
+        typingInput.placeholder = "The test has started";
         typingInput.focus();
     }
 
+    /**
+     * Stop the typing test timer, calculate WPM, and disable the typing input.
+     */
     function stopTimer() {
         endTime = new Date();
         const timeDiff = ((endTime - startTime) / 1000).toFixed(2);
         timeDisplay.textContent = timeDiff.toString();
         typingInput.disabled = true;
-        const userInput = document.getElementById('typing-input').value;
+
+        const userInput = typingInput.value;
         const correctWordCount = calculateCorrectWords(userInput, sampleText);
         const wpm = calculateWPM(correctWordCount, timeDiff);
-        document.getElementById('wpm').textContent = wpm.toString();
+        wpmDisplay.textContent = wpm.toString();
     }
 
+    /**
+     * Calculate the number of correct words typed by the user.
+     * @param {string} userInput - User's input text.
+     * @param {string} sampleText - Sample text to compare against.
+     * @returns {number} - Number of correct words.
+     */
     function calculateCorrectWords(userInput, sampleText) {
         const userWords = userInput.trim().split(/\s+/);
         const sampleWords = sampleText.trim().split(/\s+/);
@@ -80,12 +102,21 @@ document.addEventListener('DOMContentLoaded', function () {
         return correctWordCount;
     }
 
+    /**
+     * Calculate the words per minute (WPM) based on correct words and time taken.
+     * @param {number} correctWordCount - Number of correct words typed.
+     * @param {number} timeDiff - Time taken in seconds.
+     * @returns {number} - Words per minute (WPM).
+     */
     function calculateWPM(correctWordCount, timeDiff) {
         const minutes = timeDiff / 60;
         const wpm = Math.round(correctWordCount / minutes);
         return wpm;
     }
 
+    /**
+     * Show typing feedback by highlighting correct and incorrect words.
+     */
     function showTypingFeedback() {
         const userInput = typingInput.value.trim();
         const userWords = userInput.split(/\s+/);
@@ -97,21 +128,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if (userWords[i] === undefined) {
                 highlightedText += `<span>${sampleWords[i]}</span> `;
             } else if (userWords[i] === sampleWords[i]) {
-                highlightedText += `<span style="color: blue;">${sampleWords[i]}</span> `;
+                highlightedText += `<span class="correct-word">${sampleWords[i]}</span> `;
             } else {
-                highlightedText += `<span style="color: red;">${sampleWords[i]}</span> `;
+                highlightedText += `<span class="incorrect-word">${sampleWords[i]}</span> `;
             }
         }
 
         sampleTextDiv.innerHTML = highlightedText.trim();
     }
 
-
     difficultySelect.addEventListener('change', updateSampleText);
     startButton.addEventListener('click', startTimer);
     stopButton.addEventListener('click', stopTimer);
     typingInput.addEventListener('input', showTypingFeedback);
 
-    // Initialize with a default text
+    // Initialize with a default text and disable typing input
     updateSampleText();
+    typingInput.disabled = true;
+    typingInput.placeholder = "The typing area is disabled. Click the start button to begin the test.";
 });
